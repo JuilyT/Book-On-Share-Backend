@@ -3,13 +3,15 @@ const app = express();
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const emailController = require('./email/email.controller');
 
 const bookRoutes = express.Router();
 const userRoutes = express.Router();
+
 const PORT = 4001;
 
-let Book = require('./book.model');
-let User = require('./user.model');
+let Book = require('./model/book.model');
+let User = require('./model/user.model');
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -62,10 +64,10 @@ bookRoutes.route('/:id').put(function(req, res) {
 
     BookModel.findByIdAndUpdate(id, book)
         .then(book => {
-            res.status(200).json({'book': 'book uploaded successfully'});
+            res.status(200).json({'book': 'Book has been been borrowed successfully'});
         })
         .catch(err => {
-            res.status(400).send('uploading new book failed');
+            res.status(400).send('Borrowing book failed');
         });
 });
 
@@ -108,6 +110,8 @@ userRoutes.route('/:id').delete(function(req, res) {
             res.status(400).send('removing current user failed');
         })
 });
+
+app.post('/email', emailController.collectEmail);
 
 app.use('/books', bookRoutes);
 app.use('/users', userRoutes);
